@@ -23,6 +23,7 @@ private:
     has 100, the distance is 10.
   */
   unsigned int distance(string guess);
+  void updateRemaining();
 
 public:
   /*

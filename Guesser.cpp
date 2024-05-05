@@ -1,5 +1,6 @@
 #include "Guesser.h"
 #include <string>
+#include <cstdlib>
 
 using std::string;
 
@@ -15,7 +16,25 @@ using std::string;
   has 100, the distance is 10.
 */
 unsigned int Guesser::distance(string guess){
-  return 0;
+  int lDistance=0;
+  int mDistance=0;
+  int tDistance=0;
+  lDistance = abs(guess.length()-m_secret.length());
+  if(lDistance>=m_secret.length()){
+    return m_secret.length();
+  }
+  for(int i=0;i<guess.length();i++){
+    if(m_secret[i]!=guess[i]){
+      mDistance++;
+    }
+  }
+  tDistance=mDistance+lDistance;
+  if(tDistance>m_secret.length()){
+    return m_secret.length();
+  }
+  else{
+    return tDistance;
+  }
 }
 
 /*
@@ -25,7 +44,12 @@ unsigned int Guesser::distance(string guess){
   otherwise, it will be truncated at that length.
 */
 Guesser::Guesser(string secret){
-
+  int l = secret.length();
+  if(l>32){
+    secret = secret.substr(0,32);
+  }
+  m_secret = secret;
+  m_remaining = 3;
 }
 
 /*
@@ -40,9 +64,23 @@ Guesser::Guesser(string secret){
   and the secret.
 */
 bool Guesser::match(string guess){
+  if(m_remaining <= 0){
+    return false;
+  }
+  else if(Guesser::distance(guess) > 2){
+    m_remaining = 0; //lock any further attempts
+    return false;
+  }
+  else if(guess!=m_secret){
+    Guesser::updateRemaining();
+    return false;
+  }
   return true;
 }
 
+void Guesser::updateRemaining(){
+  m_remaining --;
+}
 /*
   Returns the number of guesses remaining. A Guesser object allows up to
   three (3) consecutive guesses without a match. If three guesses are made
@@ -51,6 +89,7 @@ bool Guesser::match(string guess){
   reset to three (3).
 */
 unsigned int Guesser::remaining(){
-  return 0;
+  return m_remaining;
+  // return 0;
 }
 
